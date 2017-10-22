@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>为数组添加方法（求和，最大值）</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+	<style>
+		html,body{
+			margin: 0;
+			padding: 0;
+		}
+		.box{
+			width: 300px;
+			height: 400px;
+			border: 1px solid #ccc;
+			margin: 0 auto;
+		}
+		button{
+			background-color: #f69;
+			color: #6f9;
+			outline: none;
+		}
+		button:first-child{
+			margin-top: 50px;
+			width: 100%;
+			height: 40px;
+		}
+		input{
+			width: 98%;
+			height: 40px;
+			line-height: 40px;
+			font-size: 18px;
+		}
+		button:nth-of-type(2),
+		button:nth-of-type(3),
+		button:nth-of-type(4){
+			width: 32%;
+			height: 30px;
+		}
+		span{
+			width: 100%;
+			height: 160px;
+			word-wrap: break-word;
+			display: block;
+			text-align: center;
+			color: #f69;
+			font: 700 30px/80px "Microsoft Yahei";
+		}
+	</style>
+</head>
+<body>
+	<div class="box">
+		<button>生成随机数组</button>
+		<input type="text" value="" disabled="disabled">
+		<button>求和</button>
+		<button>最大值</button>
+		<button>排序</button>
+		<span>0</span>
+	</div>
+
+	<script>
+		(function (w){
+			var btn=document.querySelectorAll("button");
+			var inp=document.querySelector("input");
+			var span=document.querySelector("span");
+
+			var addValue={
+				arr: [],
+				addRandomArr: function (){
+					var ran=0;
+					this.arr=[];
+					for (var i = 0; i < 10; i++) {
+						ran=Math.floor(Math.random()*100);
+						this.arr.push(ran);
+					}
+					inp.value=this.arr;
+				},
+				getSum: function (){
+					var sum=this.arr.reduce(function (acc,value,index){
+						acc+=value;
+						return acc;
+					},0);
+					span.innerHTML=sum;
+				},
+				getMax: function (){
+					var max=Math.max.apply(null,this.arr);
+					span.innerHTML=max;
+				},
+				sortArr: function (){
+					this.arr=this.arr.sort(function (a,b){
+						return a-b;
+					})
+					span.innerHTML=this.arr;
+				}
+			}
+
+			// 为addEventListener中的函数添加参数，使用bind() ，第一个参数为当前上下文，第二个为函数参数
+			btn[0].addEventListener("click", addValue.addRandomArr.bind(addValue), false);
+			btn[1].addEventListener("click", addValue.getSum.bind(addValue), false);
+			btn[2].addEventListener("click", addValue.getMax.bind(addValue), false);
+			btn[3].addEventListener("click", addValue.sortArr.bind(addValue), false);
+			
+
+		})(window)
+	</script>
+</body>
+</html>

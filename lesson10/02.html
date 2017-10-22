@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>自动轮播广告（面向对象版）</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+	<style>
+		html,body{
+			padding: 0;
+			margin: 0;
+		}
+		.box{
+			width: 500px;
+			height: 180px;
+			border: 1px solid #ccc;
+			margin: 0 auto;
+			border-radius: 5px;
+			overflow: hidden;
+			position: relative;
+		}
+		ul{
+			padding: 0;
+			margin: 0;
+			list-style: none;
+		}
+		.oImg{
+			position: absolute;
+			top: -0px;
+		}
+		.oImg li{
+			width: 490px;
+			height: 170px;
+			margin: 5px;
+		}
+		.oImg img{
+			display: block;
+			width: 100%;
+			height: 100%;
+		}
+		.oLi{
+			position: absolute;
+			bottom: 5px;
+			left: 50%;
+			margin-left: -70px;
+		}
+		.oLi li{
+			width: 16px;
+			height: 16px;
+			border: 1px solid #666;
+			margin: 0 5px;
+			border-radius: 50%;
+			float: left;
+			cursor: pointer;
+		}
+		.oLi li:hover,
+		.oLi li.current{
+			background-color: #f69;
+			border-color: #fff;
+		}
+	</style>
+</head>
+<body>
+	<div class="box">
+		<ul class="oImg">
+			<li><img src="images/01.jpg" alt=""></li>
+			<li><img src="images/02.jpg" alt=""></li>
+			<li><img src="images/03.jpg" alt=""></li>
+			<li><img src="images/04.jpg" alt=""></li>
+			<li><img src="images/05.jpg" alt=""></li>
+		</ul>
+		<ul class="oLi">
+			<li class="current"></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
+	</div>
+
+	<script>
+		(function (w){
+			var oImg=document.querySelector(".oImg");
+			var oUl=document.querySelector(".oLi");
+			var liArr=oUl.querySelectorAll("li");
+
+			var slideImg={
+				oldIndex: 0,
+				num: 0,
+				timer: null,
+				move: function (index){
+					this.animate(oImg,"top",-1*(index)*175);
+					liArr[index].classList.add("current");
+					liArr[this.oldIndex].classList.remove("current");
+					this.oldIndex=index;
+					this.num=index;
+				},
+				autoSlide: function (){
+					this.timer=setInterval(function (){
+						this.num++;
+						if(this.num>4){
+							this.num=0;
+						}
+						this.move(this.num)
+
+					}.bind(this), 2000)
+				},
+				stopSlide: function (){
+					clearInterval(this.timer)
+				},
+				//单属性缓动动画
+				animate: function (ele,attr,target){
+					clearInterval(ele.timer);
+					// 定时器内部修改this指向 setInterval(function(){}.bind(this),30),使this指向对象（原来指向window）
+					ele.timer=setInterval(function(){
+						var leader=parseInt(this.getStyle(ele,attr))||0;
+						var step=(target-leader)/10;
+						step=step>0?Math.ceil(step):Math.floor(step);
+						leader=leader+step;
+						ele.style[attr]=leader+"px";
+
+						if(Math.abs(target-leader)<=Math.abs(step)){
+							ele.style[attr]=target+"px";
+							clearInterval(ele.timer);
+						}
+					}.bind(this),30);
+				},
+				//兼容方法获取元素样式
+				getStyle: function (ele,attr){
+					 if(window.getComputedStyle){
+		                return window.getComputedStyle(ele,null)[attr];
+		            }
+		            return ele.currentStyle[attr];
+				}
+			}
+			liArr.forEach(function (val,index){
+				val.addEventListener("click", slideImg.move.bind(slideImg,index), false);
+			})
+			oImg.addEventListener("mouseenter", slideImg.stopSlide.bind(slideImg), false);
+			oImg.addEventListener("mouseleave", slideImg.autoSlide.bind(slideImg), false);
+			slideImg.autoSlide();
+
+		})(this)
+	</script>
+</body>
+</html>
